@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Entity
@@ -26,7 +28,7 @@ public abstract class Account {
     private String accountNumber;
     private String accountName;
     private BigDecimal accountBalance;
-    private String openDate;
+    private LocalDate openDate;
 
     @Column(name = "acc_type", insertable = false, updatable = false)
     private String accType;

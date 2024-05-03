@@ -17,4 +17,5 @@ public class AccountInfo {
     private String checkingAccountNumber;
     private String savingAccountNumber;
     private String loanAccountNumber;
+
 }

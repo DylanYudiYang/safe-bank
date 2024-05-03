@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @DiscriminatorValue("LOAN")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "loan_type", discriminatorType = DiscriminatorType.STRING)
-public class LoanAccount extends Account {
+public abstract class LoanAccount extends Account {
     private BigDecimal loanAmount;
     private double loanRate;
     private int loanMonths;
