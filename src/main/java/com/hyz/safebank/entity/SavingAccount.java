@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "hyz_saving")
+//@Table(name = "hyz_saving")
 @DiscriminatorValue("SAVING")
 public class SavingAccount extends Account {
     private BigDecimal interestRate;

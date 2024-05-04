@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "hyz_stu_loan")
+//@Table(name = "hyz_stu_loan")
 @DiscriminatorValue("STU")
 public class StuLoanAccount extends LoanAccount{
     private String studentID;
@@ -23,7 +23,7 @@ public class StuLoanAccount extends LoanAccount{
     private String degreeType;
 
     @ManyToOne
-    @JoinColumn(name = "university_id", nullable = false)
+    @JoinColumn(name = "university_id")
     private University university;
 
 }

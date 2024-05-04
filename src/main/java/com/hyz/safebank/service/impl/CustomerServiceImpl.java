@@ -2,10 +2,7 @@ package com.hyz.safebank.service.impl;
 
 import com.hyz.safebank.dto.*;
 import com.hyz.safebank.entity.*;
-import com.hyz.safebank.repository.CheckingAccountRepository;
-import com.hyz.safebank.repository.CustomerRepository;
-import com.hyz.safebank.repository.PersonLoanAccountRepository;
-import com.hyz.safebank.repository.SavingAccountRepository;
+import com.hyz.safebank.repository.*;
 import com.hyz.safebank.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +20,14 @@ public class CustomerServiceImpl implements CustomerService{
     CheckingAccountRepository checkingAccountRepository;
 
     @Autowired
+    HomeLoanAccountRepository homeLoanAccountRepository;
+
+    @Autowired
     SavingAccountRepository savingAccountRepository;
 
     @Autowired
-    PersonLoanAccountRepository personLoanAccountRepository;
+    InsuranceCompanyRepository insuranceCompanyRepository;
+
 
     @Autowired
     CheckingAccountService checkingAccountService;
@@ -55,10 +56,6 @@ public class CustomerServiceImpl implements CustomerService{
                 .state(customerRequest.getState())
                 .zipcode(customerRequest.getZipcode())
                 .accounts(new HashSet<>())
-//                .checkingAccountNumber(AccountUtils.generateAccountNumber())
-//                .savingAccountNumber(AccountUtils.generateAccountNumber())
-//                .loanAccountNumber(AccountUtils.generateAccountNumber())
-//                .accountBalance(BigDecimal.ZERO)
                 .status("ACTIVE")
                 .build();
 
@@ -78,39 +75,42 @@ public class CustomerServiceImpl implements CustomerService{
                 .customer(savedCustomer)
                 .accountNumber(AccountUtils.generateAccountNumber())
                 .accountName(savedCustomer.getFirstName()+ " " + savedCustomer.getLastName() + " Saving")
-                .accountBalance(BigDecimal.ZERO)
                 .openDate(LocalDate.of(2024, 5, 10))
                 .accType("SAVING")
                 .interestRate(BigDecimal.ZERO)
+
                 .build();
 
-        InsuranceCompany insuranceCompany = InsuranceCompany.builder()
-                .companyName("ssss")
-                .street("sssss")
+        HomeLoanAccount homeLoanAccount = HomeLoanAccount.builder()
+                .customer(savedCustomer)
+                .accountNumber(AccountUtils.generateAccountNumber())
+                .accountName(savedCustomer.getFirstName()+ " " + savedCustomer.getLastName() + " Home Loan")
+                .openDate(LocalDate.of(2024, 5, 10))
+                .accType("HOME_LOAN")
+                .loanAmount(BigDecimal.ZERO)
+                .loanRate(1.3)
+                .loanMonths(2)
+                .loanType("HOME")
+                .houseBuiltDate(LocalDate.of(2024, 5, 10))
+                .insuranceAccountNumber("2011201299")
+                .yearlyInsuranceFee(1000)
+                .insuranceCompany(insuranceCompanyRepository.findById(1L).get())
                 .build();
 
-//        LoanAccount loanAccount = LoanAccount.builder()
-//                .customer(savedCustomer)
-//                .accountNumber(AccountUtils.generateAccountNumber())
-//                .accountName(savedCustomer.getFirstName()+ " " + savedCustomer.getLastName() + " Loan")
-//                .accountBalance(BigDecimal.ZERO)
-//                .openDate(LocalDate.of(2024, 5, 10))
-//                .accType("LOAN")
-//                .loanAmount(BigDecimal.ZERO)
-//                .loanRate(0)
-//                .loanMonths(0)
-//                .loanType("STUDENT")
-//                .build();
+        HomeLoanAccount savedHomeLoanAccount = homeLoanAccountRepository.save(homeLoanAccount);
+
+
+
 
 
 
         CheckingAccount savedCheckingAccount = checkingAccountRepository.save(checkingAccount);
-        SavingAccount savedSavingAccount = savingAccountRepository.save(savingAccount);
-//        LoanAccount savedLoanAccount = loanAccountRepository.save(loanAccount);
 
-        savedCustomer.addAccount(checkingAccount);
-        savedCustomer.addAccount(savingAccount);
-//        savedCustomer.addAccount(loanAccount);
+        SavingAccount savedSavingAccount = savingAccountRepository.save(savingAccount);
+
+        savedCustomer.addAccount(savedCheckingAccount);
+        savedCustomer.addAccount(savedSavingAccount);
+        savedCustomer.addAccount(savedHomeLoanAccount);
 
 
         //Send email
@@ -129,10 +129,11 @@ public class CustomerServiceImpl implements CustomerService{
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
                 .accountInfo(AccountInfo.builder()
+                        .customerId(savedCustomer.getId())
                         .accountBalance(savedCheckingAccount.getAccountBalance())
                         .checkingAccountNumber(savedCheckingAccount.getAccountNumber())
                         .savingAccountNumber((savedSavingAccount.getAccountNumber()))
-                        .loanAccountNumber(null)
+                        //.loanAccountNumber(null)
                         .accountName(savedCustomer.getFirstName() + " " + savedCustomer.getLastName())
                         .build())
                 .build();

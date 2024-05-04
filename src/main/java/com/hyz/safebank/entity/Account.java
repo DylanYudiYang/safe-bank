@@ -27,7 +27,6 @@ public abstract class Account {
 
     private String accountNumber;
     private String accountName;
-    private BigDecimal accountBalance;
     private LocalDate openDate;
 
     @Column(name = "acc_type", insertable = false, updatable = false)

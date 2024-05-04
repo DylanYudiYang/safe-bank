@@ -27,8 +27,9 @@ public class InsuranceCompany {
     private String state;
     private String zipcode;
 
+
     // OneToMany relationship with HomeLoanAccount
-    @OneToMany(mappedBy = "insuranceCompany", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "insuranceCompany", cascade = CascadeType.ALL)
     private Set<HomeLoanAccount> homeLoanAccounts;
 
 }

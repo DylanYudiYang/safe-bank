@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "hyz_person_loan")
+//@Table(name = "hyz_person_loan")
 @DiscriminatorValue("PERSON")
 public class PersonLoanAccount extends LoanAccount{
     private String description;

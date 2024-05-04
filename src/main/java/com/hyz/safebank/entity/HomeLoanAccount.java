@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "hyz_home_loan")
+//@Table(name = "hyz_home_loan")
 @DiscriminatorValue("HOME")
 public class HomeLoanAccount extends LoanAccount{
     private LocalDate houseBuiltDate;
@@ -23,6 +23,6 @@ public class HomeLoanAccount extends LoanAccount{
     private double yearlyInsuranceFee;
 
     @ManyToOne//(fetch = FetchType.LAZY)
-    @JoinColumn(name = "insurance_company_id", nullable = false)
+    @JoinColumn(name = "insurance_company_id")
     private InsuranceCompany insuranceCompany;
 }

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "hyz_loan")
+//@Table(name = "hyz_loan")
 @DiscriminatorValue("LOAN")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "loan_type", discriminatorType = DiscriminatorType.STRING)

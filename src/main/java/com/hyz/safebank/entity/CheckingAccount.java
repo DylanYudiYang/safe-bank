@@ -14,8 +14,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "hyz_checking")
+//@Table(name = "hyz_checking")
 @DiscriminatorValue("CHECKING")
 public class CheckingAccount extends Account {
+    private BigDecimal accountBalance;
     private BigDecimal serviceCharge;
 }
