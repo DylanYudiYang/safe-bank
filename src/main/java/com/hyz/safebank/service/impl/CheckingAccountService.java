@@ -1,9 +1,6 @@
 package com.hyz.safebank.service.impl;
 
-import com.hyz.safebank.dto.AccountRequest;
-import com.hyz.safebank.dto.BankResponse;
-import com.hyz.safebank.dto.DepositWithdrawRequest;
-import com.hyz.safebank.dto.EnquiryRequest;
+import com.hyz.safebank.dto.*;
 
 import java.math.BigDecimal;
 
@@ -14,4 +11,9 @@ public interface CheckingAccountService {
 
     BankResponse deposit(DepositWithdrawRequest depositWithdrawRequest);
     BankResponse withdraw(DepositWithdrawRequest depositWithdrawRequest);
+
+    BankResponse transfer(TransferRequest transferRequest);
+
+    //delete
+    BankResponse deleteCheckingAccount(EnquiryRequest enquiryRequest);
 }

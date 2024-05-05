@@ -44,6 +44,16 @@ public class CustomerController {
         return checkingAccountService.withdraw(depositWithdrawRequest);
     }
 
+    @PostMapping("/checking-account/transfer")
+    public BankResponse transfer(@RequestBody TransferRequest transferRequest) {
+        return checkingAccountService.transfer(transferRequest);
+    }
+
+    @DeleteMapping("/checking-account")
+    public BankResponse deleteCheckingAccount(@RequestBody EnquiryRequest enquiryRequest) {
+        return checkingAccountService.deleteCheckingAccount(enquiryRequest);
+    }
+
     @PostMapping("/saving-account")
     public BankResponse createSavingAccount(@RequestBody AccountRequest accountRequest) {
         return savingAccountService.createSavingAccount(accountRequest);

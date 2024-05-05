@@ -161,5 +161,75 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                 .build();
     }
 
+    @Override
+    public BankResponse transfer(TransferRequest transferRequest) {
+        if (!checkingAccountRepository.existsById(transferRequest.getFromAccountId())|| !checkingAccountRepository.existsById(transferRequest.getToAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+        Optional<CheckingAccount> fromCheckingAccount = checkingAccountRepository.findById(transferRequest.getFromAccountId());
+
+        if (fromCheckingAccount.get().getAccountBalance().compareTo(transferRequest.getAmount()) < 0) {
+            return BankResponse.builder()
+                    .responseCode("003")
+                    .responseMessage("Insufficient funds")
+                    .checkingAccountInfo(CheckingAccountInfo.builder()
+                            .checkingAccountId(fromCheckingAccount.get().getId())
+                            .accountNumber(fromCheckingAccount.get().getAccountNumber())
+                            .accountName(fromCheckingAccount.get().getAccountName())
+                            .openDate(fromCheckingAccount.get().getOpenDate())
+                            .accType(fromCheckingAccount.get().getAccType())
+                            .accountBalance(fromCheckingAccount.get().getAccountBalance())
+                            .serviceCharge(fromCheckingAccount.get().getServiceCharge())
+                            .build())
+                    .build();
+        }
+
+        Optional<CheckingAccount> toCheckingAccount = checkingAccountRepository.findById(transferRequest.getToAccountId());
+
+        BigDecimal newFromBalance = fromCheckingAccount.get().getAccountBalance().subtract(transferRequest.getAmount());
+        fromCheckingAccount.get().setAccountBalance(newFromBalance);
+        checkingAccountRepository.save(fromCheckingAccount.get());
+
+        BigDecimal newToBalance = toCheckingAccount.get().getAccountBalance().add(transferRequest.getAmount());
+        toCheckingAccount.get().setAccountBalance(newToBalance);
+        checkingAccountRepository.save(toCheckingAccount.get());
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Transfer successful")
+                .checkingAccountInfo(CheckingAccountInfo.builder()
+                        .checkingAccountId(fromCheckingAccount.get().getId())
+                        .accountNumber(fromCheckingAccount.get().getAccountNumber())
+                        .accountName(fromCheckingAccount.get().getAccountName())
+                        .openDate(fromCheckingAccount.get().getOpenDate())
+                        .accType(fromCheckingAccount.get().getAccType())
+                        .accountBalance(fromCheckingAccount.get().getAccountBalance())
+                        .serviceCharge(fromCheckingAccount.get().getServiceCharge())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public BankResponse deleteCheckingAccount(EnquiryRequest enquiryRequest) {
+        if (!checkingAccountRepository.existsById(enquiryRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+        checkingAccountRepository.deleteById(enquiryRequest.getAccountId());
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Checking Account deleted")
+                .checkingAccountInfo(null)
+                .build();
+    }
+
 
 }
