@@ -13,5 +13,10 @@ public class BankResponse {
 
     private String responseCode;
     private String responseMessage;
-    private AccountInfo accountInfo;
+    private CustomerInfo customerInfo;
+    private CheckingAccountInfo checkingAccountInfo;
+    private SavingAccountInfo savingAccountInfo;
+    private StuLoanAccountInfo stuLoanAccountInfo;
+    private InsuranceCompanyInfo insuranceCompanyInfo;
+
 }

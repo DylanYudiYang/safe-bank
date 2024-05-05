@@ -2,10 +2,10 @@ package com.hyz.safebank.service.impl;
 
 import com.hyz.safebank.dto.AccountRequest;
 import com.hyz.safebank.dto.BankResponse;
-import com.hyz.safebank.dto.CheckingAccountInfo;
-import com.hyz.safebank.entity.CheckingAccount;
+import com.hyz.safebank.dto.SavingAccountInfo;
 import com.hyz.safebank.entity.Customer;
-import com.hyz.safebank.repository.CheckingAccountRepository;
+import com.hyz.safebank.entity.SavingAccount;
+import com.hyz.safebank.repository.SavingAccountRepository;
 import com.hyz.safebank.repository.CustomerRepository;
 import com.hyz.safebank.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +13,19 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
-public class CheckingAccountServiceImpl implements CheckingAccountService {
+public class SavingAccountServiceImpl implements SavingAccountService{
     @Autowired
-    private CheckingAccountRepository checkingAccountRepository;
+    private SavingAccountRepository savingAccountRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
 
     @Override
-    public BankResponse createCheckingAccount(AccountRequest accountRequest) {
+    public BankResponse createSavingAccount(AccountRequest accountRequest) {
         Long customerId = accountRequest.getCustomerId();
-        if (checkingAccountRepository.existsByCustomerId(customerId)) {
+        if (savingAccountRepository.existsByCustomerId(customerId)) {
             return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_EXISTS_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_EXISTS_MESSAGE)
@@ -35,29 +34,24 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
         }
 
         Customer theCustomer = customerRepository.findById(customerId).orElse(null);
-        CheckingAccount checkingAccount = CheckingAccount.builder()
+
+        SavingAccount savingAccount = SavingAccount.builder()
                 .customer(theCustomer)
                 .accountNumber(AccountUtils.generateAccountNumber())
-                .accountName(theCustomer.getFirstName()+ " " + theCustomer.getLastName() + " Checking")
+                .accountName(theCustomer.getFirstName()+ " " + theCustomer.getLastName() + " Saving")
                 .openDate(LocalDate.now())
-                .accType("CHECKING")
+                .accType("SAVING")
                 .accountBalance(BigDecimal.ZERO)
-                .serviceCharge(BigDecimal.ZERO)
+                .interestRate(BigDecimal.ZERO)
                 .build();
 
-        CheckingAccount savedCheckingAccount = checkingAccountRepository.save(checkingAccount);
-
+        SavingAccount savedSavingAccount = savingAccountRepository.save(savingAccount);
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
-                .checkingAccountInfo(CheckingAccountInfo.builder()
-                        .checkingAccountId(savedCheckingAccount.getId())
+                .savingAccountInfo(SavingAccountInfo.builder()
+                        .savingAccountId(savedSavingAccount.getId())
                                 .build())
                 .build();
-    }
-
-    public BigDecimal getCheckingAccountBalance(Long customerId) {
-        Optional<CheckingAccount> account = checkingAccountRepository.findByCustomerId(customerId);
-        return account.map(CheckingAccount::getAccountBalance).orElse(BigDecimal.ZERO);
     }
 }

@@ -19,8 +19,8 @@ public class AdminController {
     @Autowired
     private InsuranceCompanyService insuranceCompanyService;
 
-    @PostMapping
-    public InsuranceCompany create(@RequestBody InsuranceCompanyRequest insuranceCompanyRequest) {
+    @PostMapping("insurance-company")
+    public BankResponse createInsuranceCompany(@RequestBody InsuranceCompanyRequest insuranceCompanyRequest) {
         return insuranceCompanyService.createInsuranceCompany(insuranceCompanyRequest);
     }
 }

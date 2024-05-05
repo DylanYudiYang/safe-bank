@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface SavingAccountRepository extends JpaRepository <SavingAccount, Long>{
     Optional<SavingAccount> findByCustomerId(Long customerId);
+
+    Boolean existsByCustomerId(Long customerId);
 }

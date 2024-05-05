@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 //@Table(name = "hyz_saving")
 @DiscriminatorValue("SAVING")
 public class SavingAccount extends Account {
+    private BigDecimal accountBalance;
     private BigDecimal interestRate;
 
     // Getters and setters
