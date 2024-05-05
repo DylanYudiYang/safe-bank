@@ -1,8 +1,6 @@
 package com.hyz.safebank.service.impl;
 
-import com.hyz.safebank.dto.AccountRequest;
-import com.hyz.safebank.dto.BankResponse;
-import com.hyz.safebank.dto.SavingAccountInfo;
+import com.hyz.safebank.dto.*;
 import com.hyz.safebank.entity.Customer;
 import com.hyz.safebank.entity.SavingAccount;
 import com.hyz.safebank.repository.SavingAccountRepository;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class SavingAccountServiceImpl implements SavingAccountService{
@@ -60,4 +59,118 @@ public class SavingAccountServiceImpl implements SavingAccountService{
                                 .build())
                 .build();
     }
+
+    @Override
+    public BankResponse getSavingAccount(AccountRequest accountRequest) {
+        Long customerId = accountRequest.getCustomerId();
+        if (!savingAccountRepository.existsByCustomerId(customerId)) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Account does not exist")
+                    .savingAccountInfo(null)
+                    .build();
+        }
+
+        Optional<SavingAccount> savingAccount = savingAccountRepository.findByCustomerId(customerId);
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Account found")
+                .savingAccountInfo(SavingAccountInfo.builder()
+                        .savingAccountId(savingAccount.get().getId())
+                        .accountNumber(savingAccount.get().getAccountNumber())
+                        .accountName(savingAccount.get().getAccountName())
+                        .openDate(savingAccount.get().getOpenDate())
+                        .accType(savingAccount.get().getAccType())
+                        .accountBalance(savingAccount.get().getAccountBalance())
+                        .interestRate(savingAccount.get().getInterestRate())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public BankResponse deposit(DepositWithdrawRequest depositWithdrawRequest) {
+        if (!savingAccountRepository.existsById(depositWithdrawRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Account does not exist")
+                    .savingAccountInfo(null)
+                    .build();
+        }
+
+        Optional<SavingAccount> savingAccount = savingAccountRepository.findById(depositWithdrawRequest.getAccountId());
+        SavingAccount theSavingAccount = savingAccount.get();
+        BigDecimal currentBalance = theSavingAccount.getAccountBalance();
+        BigDecimal depositAmount = depositWithdrawRequest.getAmount();
+        BigDecimal newBalance = currentBalance.add(depositAmount);
+        theSavingAccount.setAccountBalance(newBalance);
+        savingAccountRepository.save(theSavingAccount);
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Deposit successful")
+                .savingAccountInfo(SavingAccountInfo.builder()
+                        .savingAccountId(theSavingAccount.getId())
+                        .accountNumber(theSavingAccount.getAccountNumber())
+                        .accountName(theSavingAccount.getAccountName())
+                        .openDate(theSavingAccount.getOpenDate())
+                        .accType(theSavingAccount.getAccType())
+                        .accountBalance(theSavingAccount.getAccountBalance())
+                        .interestRate(theSavingAccount.getInterestRate())
+                        .build())
+                .build();
+
+    }
+
+    @Override
+    public BankResponse withdraw(DepositWithdrawRequest depositWithdrawRequest) {
+        if (!savingAccountRepository.existsById(depositWithdrawRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Account does not exist")
+                    .savingAccountInfo(null)
+                    .build();
+        }
+
+        Optional<SavingAccount> savingAccount = savingAccountRepository.findById(depositWithdrawRequest.getAccountId());
+        SavingAccount theSavingAccount = savingAccount.get();
+        BigDecimal currentBalance = theSavingAccount.getAccountBalance();
+        BigDecimal withdrawAmount = depositWithdrawRequest.getAmount();
+        BigDecimal newBalance = currentBalance.subtract(withdrawAmount);
+        theSavingAccount.setAccountBalance(newBalance);
+        savingAccountRepository.save(theSavingAccount);
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Withdraw successful")
+                .savingAccountInfo(SavingAccountInfo.builder()
+                        .savingAccountId(theSavingAccount.getId())
+                        .accountNumber(theSavingAccount.getAccountNumber())
+                        .accountName(theSavingAccount.getAccountName())
+                        .openDate(theSavingAccount.getOpenDate())
+                        .accType(theSavingAccount.getAccType())
+                        .accountBalance(theSavingAccount.getAccountBalance())
+                        .interestRate(theSavingAccount.getInterestRate())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public BankResponse deleteSavingAccount(EnquiryRequest enquiryRequest) {
+        if (!savingAccountRepository.existsById(enquiryRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Account does not exist")
+                    .savingAccountInfo(null)
+                    .build();
+        }
+
+        savingAccountRepository.deleteById(enquiryRequest.getAccountId());
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Account deleted")
+                .savingAccountInfo(null)
+                .build();
+    }
+
+
 }
