@@ -1,8 +1,6 @@
 package com.hyz.safebank.service.impl;
 
-import com.hyz.safebank.dto.AccountRequest;
-import com.hyz.safebank.dto.BankResponse;
-import com.hyz.safebank.dto.CheckingAccountInfo;
+import com.hyz.safebank.dto.*;
 import com.hyz.safebank.entity.CheckingAccount;
 import com.hyz.safebank.entity.Customer;
 import com.hyz.safebank.repository.CheckingAccountRepository;
@@ -62,8 +60,106 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                 .build();
     }
 
-    public BigDecimal getCheckingAccountBalance(Long customerId) {
-        Optional<CheckingAccount> account = checkingAccountRepository.findByCustomerId(customerId);
-        return account.map(CheckingAccount::getAccountBalance).orElse(BigDecimal.ZERO);
+    public BankResponse getCheckingAccount(AccountRequest accountRequest) {
+        if (!checkingAccountRepository.existsByCustomerId(accountRequest.getCustomerId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+        Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findByCustomerId(accountRequest.getCustomerId());
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Checking Account found")
+                .checkingAccountInfo(CheckingAccountInfo.builder()
+                        .checkingAccountId(checkingAccount.get().getId())
+                        .accountNumber(checkingAccount.get().getAccountNumber())
+                        .accountName(checkingAccount.get().getAccountName())
+                        .openDate(checkingAccount.get().getOpenDate())
+                        .accType(checkingAccount.get().getAccType())
+                        .accountBalance(checkingAccount.get().getAccountBalance())
+                        .serviceCharge(checkingAccount.get().getServiceCharge())
+                        .build())
+                .build();
+
     }
+
+    @Override
+    public BankResponse deposit(DepositWithdrawRequest depositWithdrawRequest) {
+        if (!checkingAccountRepository.existsById(depositWithdrawRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+        Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findById(depositWithdrawRequest.getAccountId());
+        BigDecimal newBalance = checkingAccount.get().getAccountBalance().add(depositWithdrawRequest.getAmount());
+        checkingAccount.get().setAccountBalance(newBalance);
+        checkingAccountRepository.save(checkingAccount.get());
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Deposit successful")
+                .checkingAccountInfo(CheckingAccountInfo.builder()
+                        .checkingAccountId(checkingAccount.get().getId())
+                        .accountNumber(checkingAccount.get().getAccountNumber())
+                        .accountName(checkingAccount.get().getAccountName())
+                        .openDate(checkingAccount.get().getOpenDate())
+                        .accType(checkingAccount.get().getAccType())
+                        .accountBalance(checkingAccount.get().getAccountBalance())
+                        .serviceCharge(checkingAccount.get().getServiceCharge())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public BankResponse withdraw(DepositWithdrawRequest depositWithdrawRequest) {
+        if (!checkingAccountRepository.existsById(depositWithdrawRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+        Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findById(depositWithdrawRequest.getAccountId());
+
+        if (checkingAccount.get().getAccountBalance().compareTo(depositWithdrawRequest.getAmount()) < 0) {
+            return BankResponse.builder()
+                    .responseCode("003")
+                    .responseMessage("Insufficient funds")
+                    .checkingAccountInfo(CheckingAccountInfo.builder()
+                            .checkingAccountId(checkingAccount.get().getId())
+                            .accountNumber(checkingAccount.get().getAccountNumber())
+                            .accountName(checkingAccount.get().getAccountName())
+                            .openDate(checkingAccount.get().getOpenDate())
+                            .accType(checkingAccount.get().getAccType())
+                            .accountBalance(checkingAccount.get().getAccountBalance())
+                            .serviceCharge(checkingAccount.get().getServiceCharge())
+                            .build())
+                    .build();
+        }
+
+        BigDecimal newBalance = checkingAccount.get().getAccountBalance().subtract(depositWithdrawRequest.getAmount());
+        checkingAccount.get().setAccountBalance(newBalance);
+        checkingAccountRepository.save(checkingAccount.get());
+
+        return BankResponse.builder()
+                .responseCode("002")
+                .responseMessage("Withdraw successful")
+                .checkingAccountInfo(CheckingAccountInfo.builder()
+                        .checkingAccountId(checkingAccount.get().getId())
+                        .accountNumber(checkingAccount.get().getAccountNumber())
+                        .accountName(checkingAccount.get().getAccountName())
+                        .openDate(checkingAccount.get().getOpenDate())
+                        .accType(checkingAccount.get().getAccType())
+                        .accountBalance(checkingAccount.get().getAccountBalance())
+                        .serviceCharge(checkingAccount.get().getServiceCharge())
+                        .build())
+                .build();
+    }
+
+
 }

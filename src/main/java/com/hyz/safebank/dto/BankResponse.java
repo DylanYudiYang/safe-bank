@@ -16,7 +16,7 @@ public class BankResponse {
     private CustomerInfo customerInfo;
     private CheckingAccountInfo checkingAccountInfo;
     private SavingAccountInfo savingAccountInfo;
-    private StuLoanAccountInfo stuLoanAccountInfo;
+    private LoanAccountInfo loanAccountInfo;
     private InsuranceCompanyInfo insuranceCompanyInfo;
 
 }
