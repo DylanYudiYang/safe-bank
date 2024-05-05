@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 public class CustomerInfo {
     private Long customerId;
     private String customerName;
-//    private BigDecimal accountBalance;
-//    private String checkingAccountNumber;
-//    private String savingAccountNumber;
-//    private String loanAccountNumber;
+
 
 }

@@ -52,6 +52,12 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
                 .checkingAccountInfo(CheckingAccountInfo.builder()
                         .checkingAccountId(savedCheckingAccount.getId())
+                        .accountNumber(savedCheckingAccount.getAccountNumber())
+                        .accountName(savedCheckingAccount.getAccountName())
+                        .openDate(savedCheckingAccount.getOpenDate())
+                        .accType(savedCheckingAccount.getAccType())
+                        .accountBalance(savedCheckingAccount.getAccountBalance())
+                        .serviceCharge(savedCheckingAccount.getServiceCharge())
                                 .build())
                 .build();
     }

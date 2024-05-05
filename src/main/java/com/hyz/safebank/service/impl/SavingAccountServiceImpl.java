@@ -51,6 +51,12 @@ public class SavingAccountServiceImpl implements SavingAccountService{
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
                 .savingAccountInfo(SavingAccountInfo.builder()
                         .savingAccountId(savedSavingAccount.getId())
+                        .accountNumber(savedSavingAccount.getAccountNumber())
+                        .accountName(savedSavingAccount.getAccountName())
+                        .openDate(savedSavingAccount.getOpenDate())
+                        .accType(savedSavingAccount.getAccType())
+                        .accountBalance(savedSavingAccount.getAccountBalance())
+                        .interestRate(savedSavingAccount.getInterestRate())
                                 .build())
                 .build();
     }

@@ -28,10 +28,7 @@ public class Customer {
     private String city;
     private String state;
     private String zipcode;
-//    private String checkingAccountNumber;
-//    private String savingAccountNumber;
-//    private String loanAccountNumber;
-//    private BigDecimal accountBalance;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<Account> accounts;
     private String status;
