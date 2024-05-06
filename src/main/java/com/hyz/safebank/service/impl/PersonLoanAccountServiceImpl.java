@@ -97,7 +97,7 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
     }
 
     @Override
-    public BankResponse payLoan(LoanPaymentRequest loanPaymentRequest) {
+    public BankResponse payPersonLoan(LoanPaymentRequest loanPaymentRequest) {
         //reduce loan amount by payment amount
         if (!personLoanAccountRepository.existsById(loanPaymentRequest.getAccountId())) {
             return BankResponse.builder()
@@ -106,14 +106,15 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
                     .loanAccountInfo(null)
                     .build();
         }
-         if (loanPaymentRequest.getPaymentAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        Optional<PersonLoanAccount> personLoanAccount = personLoanAccountRepository.findById(loanPaymentRequest.getAccountId());
+         if (loanPaymentRequest.getPaymentAmount().compareTo(BigDecimal.ZERO) <= 0 || loanPaymentRequest.getPaymentAmount().compareTo(personLoanAccount.get().getLoanAmount()) > 0){
             return BankResponse.builder()
                     .responseCode("001")
                     .responseMessage("Invalid payment amount")
                     .loanAccountInfo(null)
                     .build();
          }
-        Optional<PersonLoanAccount> personLoanAccount = personLoanAccountRepository.findById(loanPaymentRequest.getAccountId());
+
         personLoanAccount.get().setLoanAmount(personLoanAccount.get().getLoanAmount().subtract(loanPaymentRequest.getPaymentAmount()));
         personLoanAccountRepository.save(personLoanAccount.get());
 

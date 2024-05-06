@@ -1,10 +1,7 @@
 package com.hyz.safebank.controller;
 
 import com.hyz.safebank.dto.*;
-import com.hyz.safebank.service.impl.CheckingAccountService;
-import com.hyz.safebank.service.impl.CustomerService;
-import com.hyz.safebank.service.impl.PersonLoanAccountService;
-import com.hyz.safebank.service.impl.SavingAccountService;
+import com.hyz.safebank.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +19,9 @@ public class CustomerController {
 
     @Autowired
     PersonLoanAccountService personLoanAccountService;
+
+    @Autowired
+    HomeLoanAccountService homeLoanAccountService;
 
     @PostMapping("/customer")
     public BankResponse createCustomer(@RequestBody CustomerRequest customerRequest) {
@@ -94,12 +94,32 @@ public class CustomerController {
     }
 
     @PostMapping("/person-loan-account/pay")
-    public BankResponse payLoan(@RequestBody LoanPaymentRequest loanPaymentRequest) {
-        return personLoanAccountService.payLoan(loanPaymentRequest);
+    public BankResponse payPersonLoan(@RequestBody LoanPaymentRequest loanPaymentRequest) {
+        return personLoanAccountService.payPersonLoan(loanPaymentRequest);
     }
 
     @DeleteMapping("/person-loan-account")
     public BankResponse deletePersonLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return personLoanAccountService.deletePersonLoanAccount(enquiryRequest);
+    }
+
+    @PostMapping("/home-loan-account")
+    public BankResponse createHomeLoanAccount(@RequestBody HomeLoanRequest homeLoanRequest) {
+        return homeLoanAccountService.createHomeLoanAccount(homeLoanRequest);
+    }
+
+    @GetMapping("/home-loan-account")
+    public BankResponse getHomeLoanAccount(@RequestBody AccountRequest accountRequest) {
+        return homeLoanAccountService.getHomeLoanAccount(accountRequest);
+    }
+
+    @PostMapping("/home-loan-account/pay")
+    public BankResponse payHomeLoan(@RequestBody LoanPaymentRequest loanPaymentRequest) {
+        return homeLoanAccountService.payHomeLoan(loanPaymentRequest);
+    }
+
+    @DeleteMapping("/home-loan-account")
+    public BankResponse deleteHomeLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
+        return homeLoanAccountService.deleteHomeLoanAccount(enquiryRequest);
     }
 }

@@ -1,6 +1,5 @@
 package com.hyz.safebank.utils;
 
-import java.time.Year;
 import java.util.Random;
 
 public class AccountUtils {
@@ -21,17 +20,26 @@ public class AccountUtils {
 //    public static final String ACCOUNT_DEBITED_MESSAGE = "Account has been successfully debited";
 
     public static String generateAccountNumber(){
-        //year + random 6 digits
-        Year currentYear = Year.now();
+
 
         Random random = new Random();
         int randNumber = random.nextInt(1000000);
 
-        String yearStr = String.valueOf(currentYear);
-        String randNumberStr = String.valueOf(randNumber);
-        StringBuilder accountNumber = new StringBuilder();
 
-        return accountNumber.append(yearStr).append(randNumberStr).toString();
+        String randNumberStr = String.valueOf(randNumber);
+
+        return "2024" + randNumberStr;
+    }
+
+    public static String generateInsuranceNumber(){
+
+
+        Random random = new Random();
+        int randNumber = random.nextInt(1000000);
+
+        String randNumberStr = String.valueOf(randNumber);
+
+        return "0985" + randNumberStr;
     }
 
 

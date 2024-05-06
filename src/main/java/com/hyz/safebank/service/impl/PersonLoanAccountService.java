@@ -7,7 +7,7 @@ public interface PersonLoanAccountService {
     BankResponse getPersonLoanAccount(AccountRequest accountRequest);
 
     //payloan
-    BankResponse payLoan(LoanPaymentRequest loanPaymentRequest);
+    BankResponse payPersonLoan(LoanPaymentRequest loanPaymentRequest);
     BankResponse deletePersonLoanAccount(EnquiryRequest enquiryRequest);
 
 }
