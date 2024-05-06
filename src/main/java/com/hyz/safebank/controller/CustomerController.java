@@ -23,6 +23,9 @@ public class CustomerController {
     @Autowired
     HomeLoanAccountService homeLoanAccountService;
 
+    @Autowired
+    StuLoanAccountService stuLoanAccountService;
+
     @PostMapping("/customer")
     public BankResponse createCustomer(@RequestBody CustomerRequest customerRequest) {
         return customerService.createCustomer(customerRequest);
@@ -121,5 +124,25 @@ public class CustomerController {
     @DeleteMapping("/home-loan-account")
     public BankResponse deleteHomeLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return homeLoanAccountService.deleteHomeLoanAccount(enquiryRequest);
+    }
+
+    @PostMapping("/stu-loan-account")
+    public BankResponse createStuLoanAccount(@RequestBody StuLoanRequest stuLoanRequest) {
+        return stuLoanAccountService.createStuLoanAccount(stuLoanRequest);
+    }
+
+    @GetMapping("/stu-loan-account")
+    public BankResponse getStuLoanAccount(@RequestBody AccountRequest accountRequest) {
+        return stuLoanAccountService.getStuLoanAccount(accountRequest);
+    }
+
+    @PostMapping("/stu-loan-account/pay")
+    public BankResponse payStuLoan(@RequestBody LoanPaymentRequest loanPaymentRequest) {
+        return stuLoanAccountService.payStuLoan(loanPaymentRequest);
+    }
+
+    @DeleteMapping("/stu-loan-account")
+    public BankResponse deleteStuLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
+        return stuLoanAccountService.deleteStuLoanAccount(enquiryRequest);
     }
 }
