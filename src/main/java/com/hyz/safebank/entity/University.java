@@ -23,6 +23,8 @@ public class University {
 
     private String universityName;
 
+    private String universityAbbreviation;
+
     @OneToMany(mappedBy = "university", cascade = CascadeType.ALL)
     private Set<StuLoanAccount> stuLoanAccounts;
 }
