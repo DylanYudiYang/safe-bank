@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class LoanAccountInfo {
-    private Long loanAccountId;
+    private Long accountId;
     private String accountNumber;
     private String accountName;
     private LocalDate openDate;

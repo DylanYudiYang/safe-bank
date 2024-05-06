@@ -1,9 +1,5 @@
 package com.hyz.safebank.dto;
 
-import com.hyz.safebank.entity.Customer;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckingAccountInfo {
-    private Long checkingAccountId;
+    private Long accountId;
     private String accountNumber;
     private String accountName;
     private LocalDate openDate;

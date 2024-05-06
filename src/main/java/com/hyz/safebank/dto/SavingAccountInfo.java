@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SavingAccountInfo {
-    private Long savingAccountId;
+    private Long accountId;
     private String accountNumber;
     private String accountName;
     private LocalDate openDate;
