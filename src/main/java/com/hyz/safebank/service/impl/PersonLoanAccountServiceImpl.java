@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
@@ -41,10 +43,10 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
                 .openDate(LocalDate.now())
                 .accType("LOAN")
                 .loanAmount(personLoanRequest.getLoanAmount())
-                .loanRate(0)
+                .loanRate(Math.round((new Random().nextDouble() * 0.03 + 0.03) * 100.0) / 100.0)
                 .loanMonths(personLoanRequest.getLoanMonths())
                 .loanType("PERSON")
-                .description(theCustomer.getFirstName()+ " " + theCustomer.getLastName() + " Person Loan")
+                .description(personLoanRequest.getDescription())
                 .build();
 
         PersonLoanAccount savedPersonLoanAccount = personLoanAccountRepository.save(personLoanAccount);
@@ -61,6 +63,7 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
                         .loanRate(savedPersonLoanAccount.getLoanRate())
                         .loanMonths(savedPersonLoanAccount.getLoanMonths())
                         .loanType(savedPersonLoanAccount.getLoanType())
+                        .customerId(savedPersonLoanAccount.getCustomer().getId())
                         .description(savedPersonLoanAccount.getDescription())
                         .build())
                 .build();
@@ -91,6 +94,7 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
                         .loanRate(personLoanAccount.get().getLoanRate())
                         .loanMonths(personLoanAccount.get().getLoanMonths())
                         .loanType(personLoanAccount.get().getLoanType())
+                        .customerId(personLoanAccount.get().getCustomer().getId())
                         .description(personLoanAccount.get().getDescription())
                         .build())
                 .build();
@@ -131,6 +135,7 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
                         .loanRate(personLoanAccount.get().getLoanRate())
                         .loanMonths(personLoanAccount.get().getLoanMonths())
                         .loanType(personLoanAccount.get().getLoanType())
+                        .customerId(personLoanAccount.get().getCustomer().getId())
                         .description(personLoanAccount.get().getDescription())
                         .build())
                 .build();
@@ -154,6 +159,31 @@ public class PersonLoanAccountServiceImpl implements PersonLoanAccountService{
                 .responseCode("002")
                 .responseMessage("Account deleted")
                 .loanAccountInfo(null)
+                .build();
+    }
+
+    @Override
+    public List<LoanAccountInfo> getAllPersonLoanAccounts() {
+        List<PersonLoanAccount> personLoanAccounts = personLoanAccountRepository.findAll();
+        return personLoanAccounts.stream()
+                .map(this::convertToInfo)
+                .toList();
+    }
+
+    @Override
+    public LoanAccountInfo convertToInfo(PersonLoanAccount personLoanAccount) {
+        return LoanAccountInfo.builder()
+                .accountId(personLoanAccount.getId())
+                .accountNumber(personLoanAccount.getAccountNumber())
+                .accountName(personLoanAccount.getAccountName())
+                .openDate(personLoanAccount.getOpenDate())
+                .accType(personLoanAccount.getAccType())
+                .loanAmount(personLoanAccount.getLoanAmount())
+                .loanRate(personLoanAccount.getLoanRate())
+                .loanMonths(personLoanAccount.getLoanMonths())
+                .loanType(personLoanAccount.getLoanType())
+                .customerId(personLoanAccount.getCustomer().getId())
+                .description(personLoanAccount.getDescription())
                 .build();
     }
 }

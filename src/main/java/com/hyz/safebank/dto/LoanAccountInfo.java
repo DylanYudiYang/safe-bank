@@ -22,6 +22,7 @@ public class LoanAccountInfo {
     private double loanRate;
     private int loanMonths;
     private String loanType;
+    private Long customerId;
     //home
     private LocalDate houseBuiltDate;
     private String insuranceAccountNumber;

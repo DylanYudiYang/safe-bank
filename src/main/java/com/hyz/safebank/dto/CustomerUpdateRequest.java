@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerInfo {
+public class CustomerUpdateRequest {
     private Long customerId;
     private String firstName;
     private String lastName;
@@ -18,4 +18,5 @@ public class CustomerInfo {
     private String city;
     private String state;
     private String zipcode;
+
 }

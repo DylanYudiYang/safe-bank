@@ -1,6 +1,9 @@
 package com.hyz.safebank.service.impl;
 
 import com.hyz.safebank.dto.*;
+import com.hyz.safebank.entity.StuLoanAccount;
+
+import java.util.List;
 
 public interface StuLoanAccountService {
 
@@ -12,4 +15,8 @@ public interface StuLoanAccountService {
 
     //delete
     BankResponse deleteStuLoanAccount(EnquiryRequest enquiryRequest);
+
+    List<LoanAccountInfo> getAllStuLoanAccounts();
+
+    LoanAccountInfo convertToInfo(StuLoanAccount stuLoanAccount);
 }

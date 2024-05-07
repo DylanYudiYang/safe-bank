@@ -1,9 +1,9 @@
 package com.hyz.safebank.service.impl;
 
-import com.hyz.safebank.dto.AccountRequest;
-import com.hyz.safebank.dto.BankResponse;
-import com.hyz.safebank.dto.DepositWithdrawRequest;
-import com.hyz.safebank.dto.EnquiryRequest;
+import com.hyz.safebank.dto.*;
+import com.hyz.safebank.entity.SavingAccount;
+
+import java.util.List;
 
 public interface SavingAccountService {
     BankResponse createSavingAccount(AccountRequest accountRequest);
@@ -16,5 +16,9 @@ public interface SavingAccountService {
 
     //delete
     BankResponse deleteSavingAccount(EnquiryRequest enquiryRequest);
+
+    List<SavingAccountInfo> getAllSavingAccounts();
+
+    SavingAccountInfo convertToInfo(SavingAccount savingAccount);
 
 }

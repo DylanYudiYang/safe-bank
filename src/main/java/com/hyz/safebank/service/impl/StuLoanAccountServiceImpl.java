@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class StuLoanAccountServiceImpl implements StuLoanAccountService{
@@ -59,7 +61,7 @@ public class StuLoanAccountServiceImpl implements StuLoanAccountService{
                 .openDate(LocalDate.now())
                 .accType("LOAN")
                 .loanAmount(stuLoanRequest.getLoanAmount())
-                .loanRate(0)
+                .loanRate(Math.round((new Random().nextDouble() * 0.03 + 0.03) * 100.0) / 100.0)
                 .loanMonths(stuLoanRequest.getLoanMonths())
                 .loanType("STU")
                 .studentID(stuLoanRequest.getStudentID())
@@ -83,6 +85,7 @@ public class StuLoanAccountServiceImpl implements StuLoanAccountService{
                         .loanRate(savedStuLoanAccount.getLoanRate())
                         .loanMonths(savedStuLoanAccount.getLoanMonths())
                         .loanType(savedStuLoanAccount.getLoanType())
+                        .customerId(savedStuLoanAccount.getCustomer().getId())
                         .studentID(savedStuLoanAccount.getStudentID())
                         .expGradDate(savedStuLoanAccount.getExpGradDate())
                         .degreeType(savedStuLoanAccount.getDegreeType())
@@ -116,6 +119,7 @@ public class StuLoanAccountServiceImpl implements StuLoanAccountService{
                         .loanRate(stuLoanAccount.getLoanRate())
                         .loanMonths(stuLoanAccount.getLoanMonths())
                         .loanType(stuLoanAccount.getLoanType())
+                        .customerId(stuLoanAccount.getCustomer().getId())
                         .studentID(stuLoanAccount.getStudentID())
                         .expGradDate(stuLoanAccount.getExpGradDate())
                         .degreeType(stuLoanAccount.getDegreeType())
@@ -160,6 +164,7 @@ public class StuLoanAccountServiceImpl implements StuLoanAccountService{
                         .loanRate(stuLoanAccount.get().getLoanRate())
                         .loanMonths(stuLoanAccount.get().getLoanMonths())
                         .loanType(stuLoanAccount.get().getLoanType())
+                        .customerId(stuLoanAccount.get().getCustomer().getId())
                         .studentID(stuLoanAccount.get().getStudentID())
                         .expGradDate(stuLoanAccount.get().getExpGradDate())
                         .degreeType(stuLoanAccount.get().getDegreeType())
@@ -185,6 +190,32 @@ public class StuLoanAccountServiceImpl implements StuLoanAccountService{
                 .responseCode("002")
                 .responseMessage("Account deleted")
                 .loanAccountInfo(null)
+                .build();
+    }
+
+    @Override
+    public List<LoanAccountInfo> getAllStuLoanAccounts() {
+        List<StuLoanAccount> stuLoanAccounts = stuLoanAccountRepository.findAll();
+        return stuLoanAccounts.stream().map(this::convertToInfo).toList();
+    }
+
+    @Override
+    public LoanAccountInfo convertToInfo(StuLoanAccount stuLoanAccount) {
+        return LoanAccountInfo.builder()
+                .accountId(stuLoanAccount.getId())
+                .accountNumber(stuLoanAccount.getAccountNumber())
+                .accountName(stuLoanAccount.getAccountName())
+                .openDate(stuLoanAccount.getOpenDate())
+                .accType(stuLoanAccount.getAccType())
+                .loanAmount(stuLoanAccount.getLoanAmount())
+                .loanRate(stuLoanAccount.getLoanRate())
+                .loanMonths(stuLoanAccount.getLoanMonths())
+                .loanType(stuLoanAccount.getLoanType())
+                .customerId(stuLoanAccount.getCustomer().getId())
+                .studentID(stuLoanAccount.getStudentID())
+                .expGradDate(stuLoanAccount.getExpGradDate())
+                .degreeType(stuLoanAccount.getDegreeType())
+                .universityName(stuLoanAccount.getUniversity().getUniversityName())
                 .build();
     }
 }

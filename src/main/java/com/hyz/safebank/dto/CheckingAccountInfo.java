@@ -20,4 +20,5 @@ public class CheckingAccountInfo {
     private String accType;
     private BigDecimal accountBalance;
     private BigDecimal serviceCharge;
+    private Long customerId;
 }

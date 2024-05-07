@@ -24,6 +24,7 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
     private String street;
     private String city;
     private String state;

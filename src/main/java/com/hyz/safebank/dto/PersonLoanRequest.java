@@ -15,4 +15,5 @@ public class PersonLoanRequest {
     private Long customerId;
     private BigDecimal loanAmount;
     private int loanMonths;
+    private String description;
 }

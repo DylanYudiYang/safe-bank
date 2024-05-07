@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class HomeLoanAccountServiceImpl implements HomeLoanAccountService{
@@ -64,12 +66,12 @@ public class HomeLoanAccountServiceImpl implements HomeLoanAccountService{
                 .openDate(LocalDate.now())
                 .accType("LOAN")
                 .loanAmount(homeLoanRequest.getLoanAmount())
-                .loanRate(0)
+                .loanRate(Math.round((new Random().nextDouble() * 0.03 + 0.03) * 100.0) / 100.0)
                 .loanMonths(homeLoanRequest.getLoanMonths())
                 .loanType("HOME")
                 .houseBuiltDate(homeLoanRequest.getHouseBuiltDate())
                 .insuranceAccountNumber(AccountUtils.generateInsuranceNumber())
-                .yearlyInsuranceFee(0)
+                .yearlyInsuranceFee(new Random().nextInt(1401) + 600)
                 .insuranceCompany(insuranceCompany)
                 .build();
 
@@ -88,6 +90,7 @@ public class HomeLoanAccountServiceImpl implements HomeLoanAccountService{
                         .loanRate(savedHomeLoanAccount.getLoanRate())
                         .loanMonths(savedHomeLoanAccount.getLoanMonths())
                         .loanType(savedHomeLoanAccount.getLoanType())
+                        .customerId(savedHomeLoanAccount.getCustomer().getId())
                         .houseBuiltDate(savedHomeLoanAccount.getHouseBuiltDate())
                         .insuranceAccountNumber(savedHomeLoanAccount.getInsuranceAccountNumber())
                         .yearlyInsuranceFee(savedHomeLoanAccount.getYearlyInsuranceFee())
@@ -122,6 +125,7 @@ public class HomeLoanAccountServiceImpl implements HomeLoanAccountService{
                         .loanRate(homeLoanAccount.getLoanRate())
                         .loanMonths(homeLoanAccount.getLoanMonths())
                         .loanType(homeLoanAccount.getLoanType())
+                        .customerId(homeLoanAccount.getCustomer().getId())
                         .houseBuiltDate(homeLoanAccount.getHouseBuiltDate())
                         .insuranceAccountNumber(homeLoanAccount.getInsuranceAccountNumber())
                         .yearlyInsuranceFee(homeLoanAccount.getYearlyInsuranceFee())
@@ -165,6 +169,7 @@ public class HomeLoanAccountServiceImpl implements HomeLoanAccountService{
                         .loanRate(homeLoanAccount.get().getLoanRate())
                         .loanMonths(homeLoanAccount.get().getLoanMonths())
                         .loanType(homeLoanAccount.get().getLoanType())
+                        .customerId(homeLoanAccount.get().getCustomer().getId())
                         .houseBuiltDate(homeLoanAccount.get().getHouseBuiltDate())
                         .insuranceAccountNumber(homeLoanAccount.get().getInsuranceAccountNumber())
                         .yearlyInsuranceFee(homeLoanAccount.get().getYearlyInsuranceFee())
@@ -189,6 +194,34 @@ public class HomeLoanAccountServiceImpl implements HomeLoanAccountService{
                 .responseCode("002")
                 .responseMessage("Account deleted")
                 .loanAccountInfo(null)
+                .build();
+    }
+
+    @Override
+    public List<LoanAccountInfo> getAllHomeLoanAccounts() {
+        List<HomeLoanAccount> homeLoanAccounts = homeLoanAccountRepository.findAll();
+        return homeLoanAccounts.stream()
+                .map(this::convertToInfo)
+                .toList();
+    }
+
+    @Override
+    public LoanAccountInfo convertToInfo(HomeLoanAccount homeLoanAccount) {
+        return LoanAccountInfo.builder()
+                .accountId(homeLoanAccount.getId())
+                .accountNumber(homeLoanAccount.getAccountNumber())
+                .accountName(homeLoanAccount.getAccountName())
+                .openDate(homeLoanAccount.getOpenDate())
+                .accType(homeLoanAccount.getAccType())
+                .loanAmount(homeLoanAccount.getLoanAmount())
+                .loanRate(homeLoanAccount.getLoanRate())
+                .loanMonths(homeLoanAccount.getLoanMonths())
+                .loanType(homeLoanAccount.getLoanType())
+                .customerId(homeLoanAccount.getCustomer().getId())
+                .houseBuiltDate(homeLoanAccount.getHouseBuiltDate())
+                .insuranceAccountNumber(homeLoanAccount.getInsuranceAccountNumber())
+                .yearlyInsuranceFee(homeLoanAccount.getYearlyInsuranceFee())
+                .insuranceCompanyName(homeLoanAccount.getInsuranceCompany().getCompanyName())
                 .build();
     }
 }

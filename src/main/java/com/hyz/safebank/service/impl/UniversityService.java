@@ -1,9 +1,9 @@
 package com.hyz.safebank.service.impl;
 
-import com.hyz.safebank.dto.BankResponse;
-import com.hyz.safebank.dto.UniversityIdRequest;
-import com.hyz.safebank.dto.UniversityRequest;
-import com.hyz.safebank.dto.UniversityUpdateRequest;
+import com.hyz.safebank.dto.*;
+import com.hyz.safebank.entity.University;
+
+import java.util.List;
 
 public interface UniversityService {
     BankResponse createUniversity(UniversityRequest universityRequest);
@@ -13,4 +13,8 @@ public interface UniversityService {
     BankResponse updateUniversity(UniversityUpdateRequest universityUpdateRequest);
 
     BankResponse deleteUniversity(UniversityIdRequest universityIdRequest);
+
+    List<UniversityInfo> getAllUniversities();
+
+    UniversityInfo convertToInfo(University university);
 }

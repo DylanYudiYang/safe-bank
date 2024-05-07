@@ -20,4 +20,5 @@ public class SavingAccountInfo {
     private String accType;
     private BigDecimal accountBalance;
     private BigDecimal interestRate;
+    private Long customerId;
 }

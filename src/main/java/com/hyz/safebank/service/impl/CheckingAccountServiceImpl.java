@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class CheckingAccountServiceImpl implements CheckingAccountService {
@@ -40,7 +42,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                 .openDate(LocalDate.now())
                 .accType("CHECKING")
                 .accountBalance(BigDecimal.ZERO)
-                .serviceCharge(BigDecimal.ZERO)
+                .serviceCharge(BigDecimal.valueOf(new Random().nextDouble() * 7 + 1).setScale(2, BigDecimal.ROUND_HALF_UP))
                 .build();
 
         CheckingAccount savedCheckingAccount = checkingAccountRepository.save(checkingAccount);
@@ -56,6 +58,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                         .accType(savedCheckingAccount.getAccType())
                         .accountBalance(savedCheckingAccount.getAccountBalance())
                         .serviceCharge(savedCheckingAccount.getServiceCharge())
+                        .customerId(savedCheckingAccount.getCustomer().getId())
                                 .build())
                 .build();
     }
@@ -81,6 +84,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                         .accType(checkingAccount.get().getAccType())
                         .accountBalance(checkingAccount.get().getAccountBalance())
                         .serviceCharge(checkingAccount.get().getServiceCharge())
+                        .customerId(checkingAccount.get().getCustomer().getId())
                         .build())
                 .build();
 
@@ -92,6 +96,14 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
             return BankResponse.builder()
                     .responseCode("001")
                     .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+
+        if (depositWithdrawRequest.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Invalid amount")
                     .checkingAccountInfo(null)
                     .build();
         }
@@ -111,6 +123,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                         .accType(checkingAccount.get().getAccType())
                         .accountBalance(checkingAccount.get().getAccountBalance())
                         .serviceCharge(checkingAccount.get().getServiceCharge())
+                        .customerId(checkingAccount.get().getCustomer().getId())
                         .build())
                 .build();
     }
@@ -124,11 +137,19 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                     .checkingAccountInfo(null)
                     .build();
         }
+
+        if (depositWithdrawRequest.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Invalid amount")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
         Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findById(depositWithdrawRequest.getAccountId());
 
         if (checkingAccount.get().getAccountBalance().compareTo(depositWithdrawRequest.getAmount()) < 0) {
             return BankResponse.builder()
-                    .responseCode("003")
+                    .responseCode("001")
                     .responseMessage("Insufficient funds")
                     .checkingAccountInfo(CheckingAccountInfo.builder()
                             .accountId(checkingAccount.get().getId())
@@ -138,6 +159,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                             .accType(checkingAccount.get().getAccType())
                             .accountBalance(checkingAccount.get().getAccountBalance())
                             .serviceCharge(checkingAccount.get().getServiceCharge())
+                            .customerId(checkingAccount.get().getCustomer().getId())
                             .build())
                     .build();
         }
@@ -157,6 +179,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                         .accType(checkingAccount.get().getAccType())
                         .accountBalance(checkingAccount.get().getAccountBalance())
                         .serviceCharge(checkingAccount.get().getServiceCharge())
+                        .customerId(checkingAccount.get().getCustomer().getId())
                         .build())
                 .build();
     }
@@ -167,6 +190,14 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
             return BankResponse.builder()
                     .responseCode("001")
                     .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+
+        if (transferRequest.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Invalid amount")
                     .checkingAccountInfo(null)
                     .build();
         }
@@ -184,6 +215,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                             .accType(fromCheckingAccount.get().getAccType())
                             .accountBalance(fromCheckingAccount.get().getAccountBalance())
                             .serviceCharge(fromCheckingAccount.get().getServiceCharge())
+                            .customerId(fromCheckingAccount.get().getCustomer().getId())
                             .build())
                     .build();
         }
@@ -209,6 +241,7 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                         .accType(fromCheckingAccount.get().getAccType())
                         .accountBalance(fromCheckingAccount.get().getAccountBalance())
                         .serviceCharge(fromCheckingAccount.get().getServiceCharge())
+                        .customerId(fromCheckingAccount.get().getCustomer().getId())
                         .build())
                 .build();
     }
@@ -222,12 +255,51 @@ public class CheckingAccountServiceImpl implements CheckingAccountService {
                     .checkingAccountInfo(null)
                     .build();
         }
+        if (!checkingAccountRepository.existsById(enquiryRequest.getAccountId())) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Checking Account not found")
+                    .checkingAccountInfo(null)
+                    .build();
+        }
+
+        //check if account has balance
+        Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findById(enquiryRequest.getAccountId());
+        if (checkingAccount.get().getAccountBalance().compareTo(BigDecimal.ZERO) > 0) {
+            return BankResponse.builder()
+                    .responseCode("001")
+                    .responseMessage("Account has balance. Withdraw balance before deleting account")
+                    .build();
+        }
+
         checkingAccountRepository.deleteById(enquiryRequest.getAccountId());
 
         return BankResponse.builder()
                 .responseCode("002")
                 .responseMessage("Checking Account deleted")
                 .checkingAccountInfo(null)
+                .build();
+    }
+
+    @Override
+    public List<CheckingAccountInfo> getAllCheckingAccounts() {
+        List<CheckingAccount> checkingAccounts = checkingAccountRepository.findAll();
+        return checkingAccounts.stream()
+                .map(this::convertToInfo)
+                .toList();
+    }
+
+    @Override
+    public CheckingAccountInfo convertToInfo(CheckingAccount checkingAccount) {
+        return CheckingAccountInfo.builder()
+                .accountId(checkingAccount.getId())
+                .accountNumber(checkingAccount.getAccountNumber())
+                .accountName(checkingAccount.getAccountName())
+                .openDate(checkingAccount.getOpenDate())
+                .accType(checkingAccount.getAccType())
+                .accountBalance(checkingAccount.getAccountBalance())
+                .serviceCharge(checkingAccount.getServiceCharge())
+                .customerId(checkingAccount.getCustomer().getId())
                 .build();
     }
 

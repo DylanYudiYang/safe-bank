@@ -5,7 +5,10 @@ import com.hyz.safebank.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/customer")
 public class CustomerController {
     @Autowired
@@ -26,17 +29,45 @@ public class CustomerController {
     @Autowired
     StuLoanAccountService stuLoanAccountService;
 
-    @PostMapping("/customer")
+    @Autowired
+    LoanAccountService loanAccountService;
+
+    @PostMapping("/register")
     public BankResponse createCustomer(@RequestBody CustomerRequest customerRequest) {
         return customerService.createCustomer(customerRequest);
     }
 
-    @PostMapping("/checking-account")
+    @PostMapping("/customer/get")
+    public BankResponse getCustomer(@RequestBody CustomerIdRequest customerIdRequest) {
+        return customerService.getCustomer(customerIdRequest);
+    }
+
+    @PostMapping("/login")
+    public BankResponse loginCustomer(@RequestBody CustomerRequest customerRequest) {
+        return customerService.loginCustomer(customerRequest);
+    }
+
+    @PostMapping("/customer/update")
+    public BankResponse updateCustomer(@RequestBody CustomerUpdateRequest customerUpdateRequest) {
+        return customerService.updateCustomer(customerUpdateRequest);
+    }
+
+    @PostMapping("/customer/delete")
+    public BankResponse deleteCustomer(@RequestBody CustomerIdRequest customerIdRequest) {
+        return customerService.deleteCustomer(customerIdRequest);
+    }
+
+    @PostMapping("/customer/all")
+    public List<CustomerInfo> getAllCustomers() {
+        return customerService.getAllCustomers();
+    }
+
+    @PostMapping("/checking-account/create")
     public BankResponse createCheckingAccount(@RequestBody AccountRequest accountRequest) {
         return checkingAccountService.createCheckingAccount(accountRequest);
     }
 
-    @GetMapping("/checking-account")
+    @PostMapping("/checking-account/get")
     public BankResponse getCheckingAccount(@RequestBody AccountRequest accountRequest) {
         return checkingAccountService.getCheckingAccount(accountRequest);
     }
@@ -56,17 +87,18 @@ public class CustomerController {
         return checkingAccountService.transfer(transferRequest);
     }
 
-    @DeleteMapping("/checking-account")
+    @PostMapping("/checking-account/delete")
     public BankResponse deleteCheckingAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return checkingAccountService.deleteCheckingAccount(enquiryRequest);
     }
 
-    @PostMapping("/saving-account")
+
+    @PostMapping("/saving-account/create")
     public BankResponse createSavingAccount(@RequestBody AccountRequest accountRequest) {
         return savingAccountService.createSavingAccount(accountRequest);
     }
 
-    @GetMapping("/saving-account")
+    @PostMapping("/saving-account/get")
     public BankResponse getSavingAccount(@RequestBody AccountRequest accountRequest) {
         return savingAccountService.getSavingAccount(accountRequest);
     }
@@ -81,17 +113,17 @@ public class CustomerController {
         return savingAccountService.withdraw(depositWithdrawRequest);
     }
 
-    @DeleteMapping("/saving-account")
+    @PostMapping("/saving-account/delete")
     public BankResponse deleteSavingAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return savingAccountService.deleteSavingAccount(enquiryRequest);
     }
 
-    @PostMapping("/person-loan-account")
+    @PostMapping("/person-loan-account/create")
     public BankResponse createPersonLoanAccount(@RequestBody PersonLoanRequest personLoanRequest) {
         return personLoanAccountService.createPersonLoanAccount(personLoanRequest);
     }
 
-    @GetMapping("/person-loan-account")
+    @PostMapping("/person-loan-account/get")
     public BankResponse getPersonLoanAccount(@RequestBody AccountRequest accountRequest) {
         return personLoanAccountService.getPersonLoanAccount(accountRequest);
     }
@@ -101,17 +133,17 @@ public class CustomerController {
         return personLoanAccountService.payPersonLoan(loanPaymentRequest);
     }
 
-    @DeleteMapping("/person-loan-account")
+    @PostMapping("/person-loan-account/delete")
     public BankResponse deletePersonLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return personLoanAccountService.deletePersonLoanAccount(enquiryRequest);
     }
 
-    @PostMapping("/home-loan-account")
+    @PostMapping("/home-loan-account/create")
     public BankResponse createHomeLoanAccount(@RequestBody HomeLoanRequest homeLoanRequest) {
         return homeLoanAccountService.createHomeLoanAccount(homeLoanRequest);
     }
 
-    @GetMapping("/home-loan-account")
+    @PostMapping("/home-loan-account/get")
     public BankResponse getHomeLoanAccount(@RequestBody AccountRequest accountRequest) {
         return homeLoanAccountService.getHomeLoanAccount(accountRequest);
     }
@@ -121,17 +153,17 @@ public class CustomerController {
         return homeLoanAccountService.payHomeLoan(loanPaymentRequest);
     }
 
-    @DeleteMapping("/home-loan-account")
+    @PostMapping("/home-loan-account/delete")
     public BankResponse deleteHomeLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return homeLoanAccountService.deleteHomeLoanAccount(enquiryRequest);
     }
 
-    @PostMapping("/stu-loan-account")
+    @PostMapping("/stu-loan-account/create")
     public BankResponse createStuLoanAccount(@RequestBody StuLoanRequest stuLoanRequest) {
         return stuLoanAccountService.createStuLoanAccount(stuLoanRequest);
     }
 
-    @GetMapping("/stu-loan-account")
+    @PostMapping("/stu-loan-account/get")
     public BankResponse getStuLoanAccount(@RequestBody AccountRequest accountRequest) {
         return stuLoanAccountService.getStuLoanAccount(accountRequest);
     }
@@ -141,8 +173,13 @@ public class CustomerController {
         return stuLoanAccountService.payStuLoan(loanPaymentRequest);
     }
 
-    @DeleteMapping("/stu-loan-account")
+    @PostMapping("/stu-loan-account/delete")
     public BankResponse deleteStuLoanAccount(@RequestBody EnquiryRequest enquiryRequest) {
         return stuLoanAccountService.deleteStuLoanAccount(enquiryRequest);
+    }
+
+    @PostMapping("/get-loan-account")
+    public BankResponse getLoanAccount(@RequestBody AccountRequest accountRequest) {
+        return loanAccountService.getLoanAccount(accountRequest);
     }
 }

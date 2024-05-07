@@ -6,6 +6,8 @@ import com.hyz.safebank.repository.UniversityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UniversityServiceImpl implements UniversityService{
 
@@ -100,6 +102,21 @@ public class UniversityServiceImpl implements UniversityService{
         return BankResponse.builder()
                 .responseCode("002")
                 .responseMessage("University deleted successfully")
+                .build();
+    }
+
+    @Override
+    public List<UniversityInfo> getAllUniversities() {
+        List<University> universities = universityRepository.findAll();
+        return universities.stream().map(this::convertToInfo).toList();
+    }
+
+    @Override
+    public UniversityInfo convertToInfo(University university) {
+        return UniversityInfo.builder()
+                .universityId(university.getId())
+                .universityName(university.getUniversityName())
+                .universityAbbreviation(university.getUniversityAbbreviation())
                 .build();
     }
 }

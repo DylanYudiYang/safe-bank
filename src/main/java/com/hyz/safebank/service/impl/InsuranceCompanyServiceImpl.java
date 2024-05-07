@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class InsuranceCompanyServiceImpl implements InsuranceCompanyService{
@@ -59,7 +61,6 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService{
                     .responseMessage("Insurance Company not found")
                     .build();
         }
-
         Optional<InsuranceCompany> insuranceCompany = insuranceCompanyRepository.findById(insuranceCompanyIdRequest.getInsuranceCompanyId());
         return BankResponse.builder()
                 .responseCode("002")
@@ -121,6 +122,26 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService{
         return BankResponse.builder()
                 .responseCode("002")
                 .responseMessage("Insurance Company deleted successfully")
+                .build();
+    }
+
+    @Override
+    public List<InsuranceCompanyInfo> getAllInsuranceCompanies() {
+        // Get all insurance companies and build a list of InsuranceCompanyInfo objects
+        List<InsuranceCompany> insuranceCompanies = insuranceCompanyRepository.findAll();
+        return insuranceCompanies.stream()
+                .map(this::convertToInfo)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public InsuranceCompanyInfo convertToInfo(InsuranceCompany insuranceCompany) {
+        return InsuranceCompanyInfo.builder()
+                .InsuranceCompanyId(insuranceCompany.getId())
+                .companyName(insuranceCompany.getCompanyName())
+                .street(insuranceCompany.getStreet())
+                .city(insuranceCompany.getCity())
+                .state(insuranceCompany.getState())
+                .zipcode(insuranceCompany.getZipcode())
                 .build();
     }
 }
